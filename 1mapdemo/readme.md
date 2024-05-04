@@ -1,20 +1,18 @@
-# OpenLayers + Vite
+# 项目简介
+这个项目是使用openlayer加载地图资源的示例项目
 
-This example demonstrates how the `ol` package can be used with [Vite](https://vitejs.dev/).
+目前已经加载的地图资源包括，所有地图资源均无偏移加载
+- openStreetMap
+- google地图（包括卫星影像和地形图）
+- 天地图（包括卫星影像和地形图）
+- 高德地图(包括卫星影像和地形图)
 
-To get started, run the following (requires Node 14+):
+后续计划支持：
+- 百度地图
+- Bing地图
 
-    npx create-ol-app my-app --template vite
-
-Then change into your new `my-app` directory and start a development server (available at http://localhost:5173):
-
-    cd my-app
-    npm start
-
-To generate a build ready for production:
-
-    npm run build
-
-Then deploy the contents of the `dist` directory to your server.  You can also run `npm run serve` to serve the results of the `dist` directory for preview.
-
-这个项目加入了openStreetMap，谷歌地图以及天地图的引入方式
+项目运行方式：
+```shell
+npm install
+npm start
+```
