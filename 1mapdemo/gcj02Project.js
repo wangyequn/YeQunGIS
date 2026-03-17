@@ -1,7 +1,7 @@
 import * as proj from "ol/proj";
 import {Projection} from "ol/proj";
 const gcj02Extent = [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244];
-const gcjMecator = new Projection({
+const gcjMercator = new Projection({
     code: "GCJ-02",
     extent: gcj02Extent,
     units: "m"
@@ -138,7 +138,7 @@ projzh.gmerc2smerc = function(input, opt_output, opt_dimension) {
 
 projzh.ll2smerc = sphericalMercator.forward;
 projzh.smerc2ll = sphericalMercator.inverse;
-proj.addProjection(gcjMecator);
-proj.addCoordinateTransforms("EPSG:4326", gcjMecator, projzh.ll2gmerc, projzh.gmerc2ll);
-proj.addCoordinateTransforms("EPSG:3857", gcjMecator, projzh.smerc2gmerc, projzh.gmerc2smerc);
-export default gcjMecator
+proj.addProjection(gcjMercator);
+proj.addCoordinateTransforms("EPSG:4326", gcjMercator, projzh.ll2gmerc, projzh.gmerc2ll);
+proj.addCoordinateTransforms("EPSG:3857", gcjMercator, projzh.smerc2gmerc, projzh.gmerc2smerc);
+export default gcjMercator
