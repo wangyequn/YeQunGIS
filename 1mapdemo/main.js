@@ -1,11 +1,14 @@
 import './style.css';
 import {Map, View} from 'ol';
 import TileLayer from 'ol/layer/Tile';
-import {OSM,XYZ} from 'ol/source';
+import {OSM, XYZ, BingMaps} from 'ol/source';
 import LayerSwitcher from "ol-ext/control/LayerSwitcher"
 import {Group} from "ol/layer";
-import {Projection} from "ol/proj";
-import gcjMecator from './gcj02Project'
+import gcjMercator from './gcj02Project'
+
+// 天地图 API Key，可通过 .env 文件配置 VITE_TIANDITU_KEY
+const TIANDITU_KEY = import.meta.env.VITE_TIANDITU_KEY || '0eb44999bae1b0225fd3bb86706b9c44';
+const BING_KEY = import.meta.env.VITE_BING_MAPS_KEY || '';
 
 const map = new Map({
     target: 'map',
@@ -71,29 +74,25 @@ var googleMapGroup = new Group({
 const tiandituVec = new TileLayer({
     title: "天地图地形图",
     source: new XYZ({
-        url: 'http://t4.tianditu.com/DataServer?T=vec_w&tk=0eb44999bae1b0225fd3bb86706b9c44&x={x}&y={y}&l={z}'
-
+        url: `https://t4.tianditu.com/DataServer?T=vec_w&tk=${TIANDITU_KEY}&x={x}&y={y}&l={z}`
     })
 });
 const tiandituCva = new TileLayer({
     title: "天地图地形图标注",
     source: new XYZ({
-        url: 'http://t4.tianditu.com/DataServer?T=cva_w&tk=0eb44999bae1b0225fd3bb86706b9c44&x={x}&y={y}&l={z}'
-
+        url: `https://t4.tianditu.com/DataServer?T=cva_w&tk=${TIANDITU_KEY}&x={x}&y={y}&l={z}`
     })
 });
 const tiandituImgC = new TileLayer({
     title: "天地图卫星图",
     source: new XYZ({
-        url: 'http://t4.tianditu.com/DataServer?T=img_w&tk=0eb44999bae1b0225fd3bb86706b9c44&x={x}&y={y}&l={z}'
-
+        url: `https://t4.tianditu.com/DataServer?T=img_w&tk=${TIANDITU_KEY}&x={x}&y={y}&l={z}`
     })
 });
 const tiandituCiaC = new TileLayer({
     title: "天地图卫星图标注",
     source: new XYZ({
-        url: 'http://t4.tianditu.com/DataServer?T=cia_w&tk=0eb44999bae1b0225fd3bb86706b9c44&x={x}&y={y}&l={z}'
-
+        url: `https://t4.tianditu.com/DataServer?T=cia_w&tk=${TIANDITU_KEY}&x={x}&y={y}&l={z}`
     })
 });
 const tiandituMapGroup = new Group({
@@ -125,8 +124,50 @@ const gaodeMapGroup = new Group({
     title:'高德地图',
     layers: [gaodeMap6,gaodeMap8,gaodeMap7]
 });
+
+// 百度地图（使用 BD-09 坐标系，可能与 WGS84 存在偏移）
+const baiduVec = new TileLayer({
+    title: "百度电子图",
+    source: new XYZ({
+        url: 'https://maponline0.bdimg.com/tile/?qt=tile&x={x}&y={y}&z={z}&styles=pl'
+    })
+});
+const baiduSat = new TileLayer({
+    title: "百度卫星图",
+    source: new XYZ({
+        url: 'https://maponline0.bdimg.com/starpic/u=x={x};y={y};z={z};v=009;type=sate&qt=satepc&fm=46&app=webearth2&v=009'
+    })
+});
+const baiduMapGroup = new Group({
+    title: '百度地图',
+    layers: [baiduVec, baiduSat]
+});
+
+// Bing 地图（需要配置 VITE_BING_MAPS_KEY）
+let bingMapGroup = null;
+if (BING_KEY) {
+    const bingRoad = new TileLayer({
+        title: "Bing 路线图",
+        source: new BingMaps({ key: BING_KEY, imagerySet: 'Road' })
+    });
+    const bingAerial = new TileLayer({
+        title: "Bing 卫星图",
+        source: new BingMaps({ key: BING_KEY, imagerySet: 'Aerial' })
+    });
+    const bingAerialLabels = new TileLayer({
+        title: "Bing 卫星图标注",
+        source: new BingMaps({ key: BING_KEY, imagerySet: 'AerialWithLabels' })
+    });
+    bingMapGroup = new Group({
+        title: 'Bing 地图',
+        layers: [bingRoad, bingAerial, bingAerialLabels]
+    });
+}
+
 map.addLayer(openStreetMapLayer)
 map.addLayer(tiandituMapGroup)
 map.addLayer(googleMapGroup)
 map.addLayer(gaodeMapGroup)
+map.addLayer(baiduMapGroup)
+if (bingMapGroup) map.addLayer(bingMapGroup)
 
